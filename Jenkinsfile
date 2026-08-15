@@ -70,11 +70,34 @@ pipeline{
         }  
    }
    post{
-    success{
-        echo 'Zomato application deploy successfully !' 
+    success {
+        emailext(
+            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+                <h2>Jenkins Build Successful</h2>
+
+                <p><b>Job:</b> ${env.JOB_NAME}</p>
+                <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+                <p><b>Status:</b> SUCCESS</p>
+                <p><b>Build URL:</b> ${env.BUILD_URL}</p>
+            """,
+            to: "ashishranjan.coc@gmail.com"
+        )
     }
-    failure{
-        echo 'echo "Deployment failed. Check Jenkins console logs.'
+    failure {
+        emailext(
+            subject: "❌ Zomato Pipeline Failed - Build #${BUILD_NUMBER}",
+            body: """
+                Pipeline failed.
+
+                Job: ${JOB_NAME}
+                Build: ${BUILD_NUMBER}
+                URL: ${BUILD_URL}
+
+                Please check Jenkins console logs.
+            """,
+            to: "ashishranjan.coc@gmail.com"
+        )
     }
    }
 }
