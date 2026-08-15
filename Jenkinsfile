@@ -12,28 +12,28 @@ pipeline{
             }
         }
         stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            script {
-                def scannerHome = tool 'SonarScanner'
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                script {
+                    def scannerHome = tool 'SonarScanner'
 
-                sh """
+                    sh """
                     ${scannerHome}/bin/sonar-scanner \
                     -Dsonar.projectKey=zomato-react \
                     -Dsonar.sources=src \
                     -Dsonar.exclusions=node_modules/**,build/**,public/**
-                """
+                    """
+                }   
+                }
             }
         }
-    }
-}
         stage('Add Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
+                }
+            }
         }
-    }
-}
         
         stage('Docker Build'){
             steps{
@@ -45,19 +45,42 @@ pipeline{
                    '''
             }
         }
-        stage('Deploy') {
-    steps {
-        sh '''
-            docker stop ${CONTAINER_NAME} || true
-            docker rm ${CONTAINER_NAME} || true
+        stage("Trivy File Scan") {
+            steps {
+                sh '''
+                docker run --rm \
+                -v "$PWD:/project" \
+                -v trivy-cache:/root/.cache/ \
+                aquasec/trivy:0.72.0 \
+                fs \
+                --severity HIGH,CRITICAL \
+                --exit-code 1 \
+                /project | trivy.txt
+                '''
+            }
+        }
+        stage("Archive Trivy Report") {
+            steps {
+                archiveArtifacts artifacts: 'trivy.txt',
+                allowEmptyArchive: true
+            }
+        }
+    
+         
 
-            docker run -d \
+        stage('Deploy') {
+            steps {
+                sh '''
+                docker stop ${CONTAINER_NAME} || true
+                docker rm ${CONTAINER_NAME} || true
+
+                docker run -d \
                 --name ${CONTAINER_NAME} \
                 -p 3000:80 \
                 ${IMAGE_NAME}:${BUILD_NUMBER}
-        '''
-    }
-}
+                '''
+            }
+        }
         stage('Varify Application'){
             steps{
                 sh '''
@@ -82,8 +105,8 @@ pipeline{
                 <p><b>Build URL:</b> ${env.BUILD_URL}</p>
             """,
             to: "ashishranjan.coc@gmail.com"
-        )
-    }
+            )
+        }
     failure {
         emailext(
             subject: "❌ Zomato Pipeline Failed - Build #${BUILD_NUMBER}",
@@ -97,7 +120,7 @@ pipeline{
                 Please check Jenkins console logs.
             """,
             to: "ashishranjan.coc@gmail.com"
-        )
-    }
+            )
+        }
    }
 }
