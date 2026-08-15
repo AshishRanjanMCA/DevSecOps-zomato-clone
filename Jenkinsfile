@@ -56,10 +56,10 @@ pipeline{
    }
    post{
     success{
-        echo "Zomato application deploy successfully !"
+        echo 'Zomato application deploy successfully !' 
     }
     failure{
-        echo "echo "Deployment failed. Check Jenkins console logs."
+        echo 'echo "Deployment failed. Check Jenkins console logs.'
     }
    }
 }
