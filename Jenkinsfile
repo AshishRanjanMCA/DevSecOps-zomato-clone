@@ -2,7 +2,7 @@ pipeline{
     agent any
 
     environment{
-        IMAGE_NAEM = "zomato-react"
+        IMAGE_NAME = "zomato-react"
         CONTAINER_NAME = "zomato-app"
     }
     stages{
@@ -49,6 +49,7 @@ pipeline{
                 sh '''
                 sleep 10
                 docker ps
+                curl -f http://localhost:3000
                 docker logs ${CONTAINER_NAME}
                 '''
             }
