@@ -25,7 +25,3 @@ EXPOSE 80
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
 
-
-=======
-CMD ["nginx", "-g", "daemon off;"]
->>>>>>> 4d345c6 ( Add sonarQuabe.properties)
