@@ -22,28 +22,19 @@ pipeline{
                    '''
             }
         }
-        stage('Stop Build Container'){
-            steps{
-                sh '''
+        stage('Deploy') {
+    steps {
+        sh '''
+            docker stop ${CONTAINER_NAME} || true
+            docker rm ${CONTAINER_NAME} || true
 
-                docker stop ${CONTAINER_NAME} || true
-                docker rm ${CONTAINER_NAME} || true
-
-                '''
-            }
-        }
-        stage('Run Container'){
-            steps{
-                sh '''
-
-                docker run -d \
-                --name ${CONTAINER_NAME}\
-                -p 3000:3000\
-                ${IMAGE_NAME}:latest
-
-                '''
-            }
-        }
+            docker run -d \
+                --name ${CONTAINER_NAME} \
+                -p 3000:80 \
+                ${IMAGE_NAME}:${BUILD_NUMBER}
+        '''
+    }
+}
         stage('Varify Application'){
             steps{
                 sh '''
