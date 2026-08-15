@@ -7,13 +7,13 @@ pipeline{
     }
     stages{
         stage('checkout'){
-            step{
+            steps{
                 checkout scm
             }
         }
         
         stage('Docker Build'){
-            step{
+            steps{
                 sh '''
 
                   docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
@@ -23,7 +23,7 @@ pipeline{
             }
         }
         stage('Stop Build Container'){
-            step{
+            steps{
                 sh '''
 
                 docker stop ${CONTAINER_NAME} || true
@@ -33,7 +33,7 @@ pipeline{
             }
         }
         stage('Run Container'){
-            step{
+            steps{
                 sh '''
 
                 docker run -d \
@@ -45,7 +45,7 @@ pipeline{
             }
         }
         stage('Varify Application'){
-            step{
+            steps{
                 sh '''
                 sleep 10
                 docker ps
