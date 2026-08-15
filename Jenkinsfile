@@ -12,13 +12,18 @@ pipeline{
             }
         }
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=zomato-react \
-                        -Dsonar.sources=src
-            '''
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            script {
+                def scannerHome = tool 'SonarScanner'
+
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=zomato-react \
+                    -Dsonar.sources=src \
+                    -Dsonar.exclusions=node_modules/**,build/**,public/**
+                """
+            }
         }
     }
 }
