@@ -97,12 +97,12 @@ pipeline{
                 artifacts: 'trivy.txt',
                 allowEmptyArchive: true
             )
-        }
+        
 
         script {
                 def report = fileExists('trivy.txt') ?
-                             readFile('trivy.txt') :
-                             'Trivy report was not generated.'
+                            readFile('trivy.txt') :
+                            'Trivy report was not generated.'
 
                 emailext(
                     subject: "Trivy Report - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
@@ -150,7 +150,7 @@ ${report}
                     """
                 )
             }
-        
+        }
 
 
 
