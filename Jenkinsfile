@@ -106,7 +106,7 @@ pipeline{
 
                 emailext(
                     subject: "Trivy Report - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    to: 'security-team@example.com',
+                    to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
                     attachmentsPattern: 'trivy.txt',
                     body: """
