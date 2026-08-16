@@ -55,6 +55,7 @@ pipeline{
                 fs \
                 --scanners vuln \
                 --severity HIGH,CRITICAL \
+                --exit-code 0 \
                 --format table \
                 --output /project/trivy.txt \
                  /project
