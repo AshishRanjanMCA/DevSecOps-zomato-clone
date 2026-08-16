@@ -98,6 +98,63 @@ pipeline{
                 allowEmptyArchive: true
             )
         }
+
+        script {
+                def report = fileExists('trivy.txt') ?
+                             readFile('trivy.txt') :
+                             'Trivy report was not generated.'
+
+                emailext(
+                    subject: "Trivy Report - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    to: 'security-team@example.com',
+                    mimeType: 'text/html',
+                    attachmentsPattern: 'trivy.txt',
+                    body: """
+                        <html>
+                        <body>
+                            <h2>🔐 Trivy Security Scan Report</h2>
+
+                            <table border="1" cellpadding="6">
+                                <tr>
+                                    <td><b>Project</b></td>
+                                    <td>${env.JOB_NAME}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Build</b></td>
+                                    <td>#${env.BUILD_NUMBER}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Build Status</b></td>
+                                    <td>${currentBuild.currentResult}</td>
+                                </tr>
+                            </table>
+
+                            <h3>Vulnerability Report</h3>
+
+                            <pre>
+${report}
+                            </pre>
+
+                            <p>
+                                The complete report is attached as
+                                <b>trivy.txt</b>.
+                            </p>
+
+                            <p>
+                                <a href="${env.BUILD_URL}">
+                                    View Jenkins Build
+                                </a>
+                            </p>
+                        </body>
+                        </html>
+                    """
+                )
+            }
+        
+
+
+
+
     success {
         emailext(
             subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
