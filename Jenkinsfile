@@ -53,9 +53,13 @@ pipeline{
                 -v trivy-cache:/root/.cache/ \
                 aquasec/trivy:0.72.0 \
                 fs \
+                --scanners vuln \
                 --severity HIGH,CRITICAL \
                 --exit-code 1 \
-                /project | trivy.txt
+                --format table \
+                --output /project/trivy.txt \
+                 /project
+                
                 '''
             }
         }
