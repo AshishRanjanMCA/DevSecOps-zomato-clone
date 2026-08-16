@@ -63,12 +63,7 @@ pipeline{
                 '''
             }
         }
-        stage("Archive Trivy Report") {
-            steps {
-                archiveArtifacts artifacts: 'trivy.txt',
-                allowEmptyArchive: true
-            }
-        }
+        
     
          
 
@@ -97,6 +92,12 @@ pipeline{
         }  
    }
    post{
+    always {
+            archiveArtifacts(
+                artifacts: 'trivy.txt',
+                allowEmptyArchive: true
+            )
+        }
     success {
         emailext(
             subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
