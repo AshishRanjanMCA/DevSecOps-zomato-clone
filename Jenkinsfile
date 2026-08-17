@@ -86,16 +86,21 @@ pipeline{
         stage('Docker Scout Image scan'){
             steps{
                 sh '''
-                docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                docker/scout-cli \
-                cves \
-                --only-severity critical,high \
-                --exit-code \
-                --format markdown --output /project/scout-report.md
-                local://${IMAGE_NAME}:${IMAGE_TAG}
+                echo "$DOCKER_PASSWORD" | docker login \
+                    --username "$DOCKER_USERNAME" \
+                    --password-stdin
 
-                '''
+                docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v "$WORKSPACE:/project" \
+                    docker/scout-cli \
+                    cves \
+                    --only-severity critical,high \
+                    --exit-code \
+                    --format markdown \
+                    --output /project/scout-report.md \
+                    local://zomato-react:${BUILD_NUMBER}
+            '''
             }
 
         }
@@ -132,6 +137,10 @@ pipeline{
     always {
             archiveArtifacts(
                 artifacts: 'trivy.txt',
+                allowEmptyArchive: true
+            )
+            archiveArtifacts(
+                artifacts: 'scout-report.md',
                 allowEmptyArchive: true
             )
         
