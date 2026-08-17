@@ -48,7 +48,7 @@ pipeline{
                 --severity HIGH,CRITICAL \
                 --exit-code 0 \
                 --format table \
-                --output /project/trivy-${BUILD_NUMBER}.txt \
+                --output /project/trivy-fs-report-${BUILD_NUMBER}.txt \
                  /project
                 
                 '''
@@ -106,7 +106,7 @@ pipeline{
                     --only-severity critical,high \
                     --exit-code \
                     --format markdown \
-                    --output /project/scout-report-${BUILD_NUMBER}.md \
+                    --output /project/scout-image-report-${BUILD_NUMBER}.md \
                     local://${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
@@ -144,11 +144,11 @@ pipeline{
    post{
     always {
             archiveArtifacts(
-                artifacts: 'trivy-${BUILD_NUMBER}.txt',
+                artifacts: 'trivy-fs-report-${BUILD_NUMBER}.txt',
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'scout-report-${BUILD_NUMBER}.md',
+                artifacts: 'scout-image-report-${BUILD_NUMBER}.md',
                 allowEmptyArchive: true
             )
         
