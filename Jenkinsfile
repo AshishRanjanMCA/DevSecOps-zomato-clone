@@ -6,7 +6,7 @@ pipeline{
         CONTAINER_NAME = "zomato-app"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
-    }
+    
     stages{
         stage('checkout'){
             steps{
