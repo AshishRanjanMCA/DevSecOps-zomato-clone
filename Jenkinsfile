@@ -89,7 +89,8 @@ pipeline{
                 sh '''
             docker run --rm \
               -v /var/run/docker.sock:/var/run/docker.sock \
-              -v "$HOME/.docker:/root/.docker:ro" \
+              -e DOCKER_SCOUT_HUB_USER="$DOCKER_USERNAME" \
+              -e DOCKER_SCOUT_HUB_PASSWORD="$DOCKER_PASSWORD" \
               -v "$WORKSPACE:/project" \
               docker/scout-cli \
               cves \
