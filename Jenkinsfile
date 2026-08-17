@@ -83,20 +83,22 @@ pipeline{
                    '''
             }
         }
+         
         stage('Docker Scout Image scan'){
             steps{
                 sh '''
-                docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                -v "$WORKSPACE:/project" \
-                docker/scout-cli \
-                cves \
-                --only-severity critical,high \
-                --exit-code \
-                --format markdown \
-                --output /project/scout-report.md \
-                local://zomato-react:${BUILD_NUMBER}
-            '''
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$HOME/.docker:/root/.docker:ro" \
+              -v "$WORKSPACE:/project" \
+              docker/scout-cli \
+              cves \
+              --only-severity critical,high \
+              --exit-code \
+              --format markdown \
+              --output /project/scout-report.md \
+              local://zomato-react:${BUILD_NUMBER}
+        '''
             }
 
         }
