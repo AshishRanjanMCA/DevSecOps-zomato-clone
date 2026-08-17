@@ -63,6 +63,21 @@ pipeline{
                    '''
             }
         }
+        stage('Docker Scout Image scan'){
+            steps{
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                docker/scout-cli \
+                cves \
+                --only-severity critical,high \
+                --exit-code \
+                local://${IMAGE_NAME}:${IMAGE_TAG}
+
+                '''
+            }
+
+        }
         
         
     
