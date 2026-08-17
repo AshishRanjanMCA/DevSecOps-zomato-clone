@@ -39,6 +39,8 @@ pipeline{
         stage("Trivy File Scan") {
             steps {
                 sh '''
+                mkdir -p security-reports
+
                 docker run --rm \
                 -v "$PWD:/project" \
                 -v trivy-cache:/root/.cache/ \
@@ -48,7 +50,7 @@ pipeline{
                 --severity HIGH,CRITICAL \
                 --exit-code 0 \
                 --format table \
-                --output /project/trivy-fs-report-${BUILD_NUMBER}.txt \
+                --output /project/security-reports/trivy-fs-report-${BUILD_NUMBER}.txt \
                  /project
                 
                 '''
@@ -94,7 +96,7 @@ pipeline{
                 )
             ]) {
                 sh '''
-        
+                    mkdir -p security-reports
                     docker run --rm \
                     -u root \
                     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -106,7 +108,7 @@ pipeline{
                     --only-severity critical,high \
                     --exit-code \
                     --format markdown \
-                    --output /project/scout-image-report-${BUILD_NUMBER}.md \
+                    --output /project/security-reports/scout-image-report-${BUILD_NUMBER}.md \
                     local://${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
@@ -144,65 +146,75 @@ pipeline{
    post{
     always {
             archiveArtifacts(
-                artifacts: 'trivy-fs-report-${BUILD_NUMBER}.txt',
+                artifacts: 'security-reports/trivy-fs-report-*.txt',
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'scout-image-report-${BUILD_NUMBER}.md',
+                artifacts: 'security-reports/scout-image-report-*.md',
                 allowEmptyArchive: true
             )
         
 
         script {
-                def report = fileExists('trivy-${BUILD_NUMBER}.txt') ?
-                            readFile('trivy-${BUILD_NUMBER}.txt') :
+                def report = fileExists('trivy-fs-report-${BUILD_NUMBER}.txt') ?
+                            readFile('trivy-fs-report-${BUILD_NUMBER}.txt') :
                             'Trivy report was not generated.'
 
                 emailext(
-                    subject: "Trivy Report - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    subject: "Security Scan Reports - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: 'trivy-${BUILD_NUMBER}.txt',
-                    body: """
-                        <html>
-                        <body>
-                            <h2>🔐 Trivy Security Scan Report</h2>
+                    mimeType: 'text/html',
 
-                            <table border="1" cellpadding="6">
-                                <tr>
-                                    <td><b>Project</b></td>
-                                    <td>${env.JOB_NAME}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Build</b></td>
-                                    <td>#${env.BUILD_NUMBER}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Build Status</b></td>
-                                    <td>${currentBuild.currentResult}</td>
-                                </tr>
-                            </table>
+            attachmentsPattern:
+                'security-reports/trivy-fs-report-*.txt,security-reports/scout-image-report-*.md',
 
-                            <h3>Vulnerability Report</h3>
+            body: """
+                <html>
+                <body>
 
-                            <pre>
-${report}
-                            </pre>
+                <h2>DevSecOps Security Scan Report</h2>
 
-                            <p>
-                                The complete report is attached as
-                                <b>trivy-${BUILD_NUMBER}.txt</b>.
-                            </p>
+                <p><b>Project:</b> ${env.JOB_NAME}</p>
 
-                            <p>
-                                <a href="${env.BUILD_URL}">
-                                    View Jenkins Build
-                                </a>
-                            </p>
-                        </body>
-                        </html>
-                    """
-                )
+                <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
+
+                <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
+
+                <p><b>Docker Image:</b>
+                   zomato-react:${env.BUILD_NUMBER}
+                </p>
+
+                <h3>Security Scans</h3>
+
+                <ul>
+                    <li>Trivy Filesystem Scan</li>
+                    <li>Docker Scout Image Scan</li>
+                </ul>
+
+                <p>
+                    The detailed security reports are attached to this email.
+                </p>
+
+                <p>
+                    <b>Reports:</b>
+                </p>
+
+                <ul>
+                    <li>Trivy FS Report</li>
+                    <li>Docker Scout Image Report</li>
+                </ul>
+
+                <p>
+                    <a href="${env.BUILD_URL}">
+                        Open Jenkins Build
+                    </a>
+                </p>
+
+                </body>
+                </html>
+            """
+        )
             }
         }
 
