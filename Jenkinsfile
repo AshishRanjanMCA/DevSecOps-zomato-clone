@@ -48,7 +48,7 @@ pipeline{
                 --severity HIGH,CRITICAL \
                 --exit-code 0 \
                 --format table \
-                --output /project/trivy.txt \
+                --output /project/trivy.${BUILD_NUMBER}.txt \
                  /project
                 
                 '''
@@ -106,8 +106,8 @@ pipeline{
                     --only-severity critical,high \
                     --exit-code \
                     --format markdown \
-                    --output /project/scout-report.md \
-                    local://zomato-react:${BUILD_NUMBER}
+                    --output /project/scout-report.${BUILD_NUMBER}.md \
+                    local://${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
@@ -144,25 +144,25 @@ pipeline{
    post{
     always {
             archiveArtifacts(
-                artifacts: 'trivy.txt',
+                artifacts: 'trivy-${BUILD_NUMBER}.txt',
                 allowEmptyArchive: true
             )
             archiveArtifacts(
-                artifacts: 'scout-report.md',
+                artifacts: 'scout-report-${BUILD_NUMBER}.md',
                 allowEmptyArchive: true
             )
         
 
         script {
-                def report = fileExists('trivy.txt') ?
-                            readFile('trivy.txt') :
+                def report = fileExists('trivy.${BUILD_NUMBER}.txt') ?
+                            readFile('trivy-${BUILD_NUMBER}.txt') :
                             'Trivy report was not generated.'
 
                 emailext(
                     subject: "Trivy Report - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: 'trivy.txt',
+                    attachmentsPattern: 'trivy-${BUILD_NUMBER}.txt',
                     body: """
                         <html>
                         <body>
@@ -191,7 +191,7 @@ ${report}
 
                             <p>
                                 The complete report is attached as
-                                <b>trivy.txt</b>.
+                                <b>trivy-${BUILD_NUMBER}.txt</b>.
                             </p>
 
                             <p>
