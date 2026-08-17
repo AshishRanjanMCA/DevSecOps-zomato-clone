@@ -74,6 +74,7 @@ pipeline{
                 cves \
                 --only-severity critical,high \
                 --exit-code \
+                --format markdown --output /project/scout-report.md
                 local://${IMAGE_NAME}:${IMAGE_TAG}
 
                 '''
