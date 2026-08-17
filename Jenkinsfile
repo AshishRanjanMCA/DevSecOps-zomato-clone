@@ -4,6 +4,8 @@ pipeline{
     environment{
         IMAGE_NAME = "zomato-react"
         CONTAINER_NAME = "zomato-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
     }
     stages{
         stage('checkout'){
