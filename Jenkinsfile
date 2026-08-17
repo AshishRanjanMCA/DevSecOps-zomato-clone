@@ -94,8 +94,9 @@ pipeline{
                 )
             ]) {
                 sh '''
-                    -u root \
+        
                     docker run --rm \
+                    -u root \
                     -v /var/run/docker.sock:/var/run/docker.sock \
                     -v "$WORKSPACE:/project" \
                     -e DOCKER_SCOUT_HUB_USER="$DOCKER_USERNAME" \
