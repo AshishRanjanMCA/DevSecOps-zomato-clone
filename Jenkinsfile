@@ -48,7 +48,7 @@ pipeline{
                 --severity HIGH,CRITICAL \
                 --exit-code 0 \
                 --format table \
-                --output /project/trivy.${BUILD_NUMBER}.txt \
+                --output /project/trivy-${BUILD_NUMBER}.txt \
                  /project
                 
                 '''
@@ -106,7 +106,7 @@ pipeline{
                     --only-severity critical,high \
                     --exit-code \
                     --format markdown \
-                    --output /project/scout-report.${BUILD_NUMBER}.md \
+                    --output /project/scout-report-${BUILD_NUMBER}.md \
                     local://${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
@@ -154,7 +154,7 @@ pipeline{
         
 
         script {
-                def report = fileExists('trivy.${BUILD_NUMBER}.txt') ?
+                def report = fileExists('trivy-${BUILD_NUMBER}.txt') ?
                             readFile('trivy-${BUILD_NUMBER}.txt') :
                             'Trivy report was not generated.'
 
@@ -209,34 +209,6 @@ ${report}
 
 
 
-    success {
-        emailext(
-            subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: """
-                <h2>Jenkins Build Successful</h2>
-
-                <p><b>Job:</b> ${env.JOB_NAME}</p>
-                <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
-                <p><b>Status:</b> SUCCESS</p>
-                <p><b>Build URL:</b> ${env.BUILD_URL}</p>
-            """,
-            to: "ashishranjan.coc@gmail.com"
-            )
-        }
-    failure {
-        emailext(
-            subject: "❌ Zomato Pipeline Failed - Build #${BUILD_NUMBER}",
-            body: """
-                Pipeline failed.
-
-                Job: ${JOB_NAME}
-                Build: ${BUILD_NUMBER}
-                URL: ${BUILD_URL}
-
-                Please check Jenkins console logs.
-            """,
-            to: "ashishranjan.coc@gmail.com"
-            )
-        }
+    
    }
 }
