@@ -84,25 +84,32 @@ pipeline{
             }
         }
          
-        stage('Docker Scout Image scan'){
-            steps{
+    stage('Docker Scout Image Scan') {
+        steps {
+            withCredentials([
+                usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )
+            ]) {
                 sh '''
-            docker run --rm \
-              -v /var/run/docker.sock:/var/run/docker.sock \
-              -e DOCKER_SCOUT_HUB_USER="$DOCKER_USERNAME" \
-              -e DOCKER_SCOUT_HUB_PASSWORD="$DOCKER_PASSWORD" \
-              -v "$WORKSPACE:/project" \
-              docker/scout-cli \
-              cves \
-              --only-severity critical,high \
-              --exit-code \
-              --format markdown \
-              --output /project/scout-report.md \
-              local://zomato-react:${BUILD_NUMBER}
-        '''
+                    docker run --rm \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v "$WORKSPACE:/project" \
+                    -e DOCKER_SCOUT_HUB_USER="$DOCKER_USERNAME" \
+                    -e DOCKER_SCOUT_HUB_PASSWORD="$DOCKER_PASSWORD" \
+                    docker/scout-cli \
+                    cves \
+                    --only-severity critical,high \
+                    --exit-code \
+                    --format markdown \
+                    --output /project/scout-report.md \
+                    local://zomato-react:${BUILD_NUMBER}
+                '''
             }
-
         }
+    }
         
         
     
