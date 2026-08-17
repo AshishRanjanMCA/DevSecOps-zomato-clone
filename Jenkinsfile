@@ -156,18 +156,13 @@ pipeline{
         
 
         script {
-                def report = fileExists('trivy-fs-report-${BUILD_NUMBER}.txt') ?
-                            readFile('trivy-fs-report-${BUILD_NUMBER}.txt') :
-                            'Trivy report was not generated.'
-
                 emailext(
                     subject: "Security Scan Reports - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
-                    mimeType: 'text/html',
 
-            attachmentsPattern:
-                'security-reports/trivy-fs-report-*.txt,security-reports/scout-image-report-*.md',
+                attachmentsPattern:
+                    'security-reports/trivy-fs-report-*.txt,security-reports/scout-image-report-*.md',
 
             body: """
                 <html>
