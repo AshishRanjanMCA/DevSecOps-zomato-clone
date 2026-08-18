@@ -122,7 +122,7 @@ pipeline{
                     usernameVariable: 'DOCKER_USERNAME',
                     passwordVariable: 'DOCKER_PASSWORD'
                 )
-            ])
+            ]){
                 
                sh '''
                 docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
@@ -133,7 +133,7 @@ pipeline{
                 '''
                  }
             }
-            
+        }
     
          
 
