@@ -114,8 +114,19 @@ pipeline{
             }
         }
     }
-        
-        
+        stage('Docker Push') {
+            steps {
+                
+               sh '''
+                docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
+                    ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
+
+                docker push \
+                    ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
+                '''
+                 }
+            }
+            
     
          
 
