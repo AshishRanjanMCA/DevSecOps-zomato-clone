@@ -116,6 +116,13 @@ pipeline{
     }
         stage('Docker Push') {
             steps {
+                withCredentials([
+                usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )
+            ])
                 
                sh '''
                 docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
