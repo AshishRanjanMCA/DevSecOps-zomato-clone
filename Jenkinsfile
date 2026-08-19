@@ -188,10 +188,7 @@ pipeline{
 
         script {
                 emailext(
-                    cleanWs(
-                        deleteDirs: true,
-                        disableDeferredWipeout: true
-                    )
+                    
                     subject: "Security Scan Reports - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
@@ -247,6 +244,10 @@ pipeline{
             """
         )
             }
+            cleanWs(
+                        deleteDirs: true,
+                        disableDeferredWipeout: true
+                    )
         }
    }
 
