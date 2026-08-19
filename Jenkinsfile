@@ -134,8 +134,8 @@ pipeline{
                // masking the output used set +x 
                sh '''
                set +x 
-                 # docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
-                 #   ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
+                 docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
+                   ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
 
                 docker push \
                     ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
@@ -174,6 +174,10 @@ pipeline{
    }
    post{
     always {
+          cleanWs(
+                        deleteDirs: true,
+                        disableDeferredWipeout: true
+                    )
            
             archiveArtifacts(
                 artifacts: 'security-reports/trivy-fs-report-*.txt',
@@ -244,10 +248,7 @@ pipeline{
             """
         )
             }
-            cleanWs(
-                        deleteDirs: true,
-                        disableDeferredWipeout: true
-                    )
+            
         }
    
 
