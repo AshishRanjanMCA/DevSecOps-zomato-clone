@@ -67,10 +67,14 @@ pipeline{
                     )
                 ]) {
                     sh '''
+                      set +x
+
                         echo "$DOCKER_PASSWORD" | \
                         docker login \
                           --username "$DOCKER_USERNAME" \
                           --password-stdin
+
+                        set +x
                     '''
                 }
             }
@@ -96,6 +100,8 @@ pipeline{
                 )
             ]) {
                 sh '''
+                   set +x
+
                     mkdir -p security-reports
                     docker run --rm \
                     -u root \
@@ -110,6 +116,8 @@ pipeline{
                     --format markdown \
                     --output /project/security-reports/scout-image-report-${BUILD_NUMBER}.md \
                     local://${IMAGE_NAME}:${BUILD_NUMBER}
+                    
+                    set +x
                 '''
             }
         }
