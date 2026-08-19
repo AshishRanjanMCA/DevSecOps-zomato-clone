@@ -174,10 +174,7 @@ pipeline{
    }
    post{
     always {
-           cleanWs(
-            deleteDirs: true,
-            disableDeferredWipeout: true
-        )
+           
             archiveArtifacts(
                 artifacts: 'security-reports/trivy-fs-report-*.txt',
                 allowEmptyArchive: true
@@ -191,6 +188,7 @@ pipeline{
 
         script {
                 emailext(
+                    
                     subject: "Security Scan Reports - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
                     mimeType: 'text/html',
@@ -242,6 +240,10 @@ pipeline{
 
                 </body>
                 </html>
+                cleanWs(
+                        deleteDirs: true,
+                        disableDeferredWipeout: true
+                    )
             """
         )
             }
