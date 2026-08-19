@@ -139,8 +139,9 @@ pipeline{
 
                 docker push \
                     ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
-                '''
                 set +x
+                '''
+                
                  }
             }
         }
@@ -173,6 +174,10 @@ pipeline{
    }
    post{
     always {
+           cleanWs(
+            deleteDirs: true,
+            disableDeferredWipeout: true
+        )
             archiveArtifacts(
                 artifacts: 'security-reports/trivy-fs-report-*.txt',
                 allowEmptyArchive: true
@@ -181,6 +186,7 @@ pipeline{
                 artifacts: 'security-reports/scout-image-report-*.md',
                 allowEmptyArchive: true
             )
+
         
 
         script {
