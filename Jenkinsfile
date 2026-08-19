@@ -82,7 +82,7 @@ pipeline{
         stage('Docker Build'){
             steps{
                 sh '''
-                  docker rmi -f ${IMAGE_NAME}:${BUILD_NUMBER}
+                  docker images 'zomato-react' -q | xargs -r docker rmi -f || true
                   docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
                   # docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
                 
