@@ -82,7 +82,7 @@ pipeline{
         stage('Docker Build'){
             steps{
                 sh '''
-                  dokcer rmi -f ${IMAGE_NAME}:${BUILD_NUMBER}
+                  docker rmi -f ${IMAGE_NAME}:${BUILD_NUMBER}
                   docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
                   # docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
                 
