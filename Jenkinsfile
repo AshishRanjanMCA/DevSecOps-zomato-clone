@@ -131,14 +131,16 @@ pipeline{
                     passwordVariable: 'DOCKER_PASSWORD'
                 )
             ]){
-                
+               // masking the output used set +x 
                sh '''
+               set +x 
                 docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
                     ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
 
                 docker push \
                     ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
+                set +x
                  }
             }
         }
