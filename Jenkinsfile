@@ -134,8 +134,8 @@ pipeline{
                // masking the output used set +x 
                sh '''
                set +x 
-                docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
-                    ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
+                 # docker tag ${IMAGE_NAME}:${BUILD_NUMBER} \
+                 #   ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
 
                 docker push \
                     ${DOCKER_USERNAME}/${IMAGE_NAME}:${BUILD_NUMBER}
@@ -188,6 +188,10 @@ pipeline{
 
         script {
                 emailext(
+                    cleanWs(
+                        deleteDirs: true,
+                        disableDeferredWipeout: true
+                    )
                     
                     subject: "Security Scan Reports - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     to: 'ashishranjan.coc@gmail.com',
@@ -240,10 +244,7 @@ pipeline{
 
                 </body>
                 </html>
-                cleanWs(
-                        deleteDirs: true,
-                        disableDeferredWipeout: true
-                    )
+                
             """
         )
             }
