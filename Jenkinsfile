@@ -174,11 +174,7 @@ pipeline{
    }
    post{
     always {
-          cleanWs(
-                        deleteDirs: true,
-                        disableDeferredWipeout: true
-                    )
-           
+          
             archiveArtifacts(
                 artifacts: 'security-reports/trivy-fs-report-*.txt',
                 allowEmptyArchive: true
@@ -187,8 +183,12 @@ pipeline{
                 artifacts: 'security-reports/scout-image-report-*.md',
                 allowEmptyArchive: true
             )
+            cleanWs(
+                        deleteDirs: true,
+                        disableDeferredWipeout: true
+                    )
 
-        
+          
 
         script {
                 emailext(
