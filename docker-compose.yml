@@ -11,7 +11,7 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-      - "9000:9000"
+      - "9001:9000"
     
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
