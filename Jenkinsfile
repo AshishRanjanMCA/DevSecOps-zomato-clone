@@ -148,7 +148,7 @@ pipeline{
         }
     
          
-
+       /*
         stage('Deploy') {
             steps {
                 sh '''
@@ -162,13 +162,39 @@ pipeline{
                 '''
             }
         }
+        */
+
+        stage('Deploy App + Monitoring') {
+            steps {
+
+                sh '''
+                    docker compose down
+
+                    docker compose up -d
+                '''
+            }
+        }
+        
         stage('Varify Application'){
             steps{
                 sh '''
-                sleep 10
-                docker ps
-                curl -f http://localhost:3000
-                docker logs ${CONTAINER_NAME}
+               # sleep 10
+               # docker ps
+               # curl -f http://localhost:3000
+               # docker logs ${CONTAINER_NAME}
+                
+                echo "Running containers:"
+                    docker ps
+
+                    echo "Checking Prometheus:"
+                    curl -f http://localhost:9090/-/healthy
+
+                    echo "Checking Grafana:"
+                    curl -f http://localhost:3000/api/health
+
+                    echo "Checking Application:"
+                    curl -f http://localhost:8081
+                
                 '''
             }
         }  
