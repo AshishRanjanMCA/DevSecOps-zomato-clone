@@ -195,7 +195,7 @@ pipeline{
                     curl -f http://localhost:9090/-/healthy
 
                     echo "Checking Grafana:"
-                    curl -fs http://localhost:3000/api/health
+                    curl -f http://localhost:3000/api/health
 
                     echo "Checking Application:"
                     curl -f http://localhost:8081
