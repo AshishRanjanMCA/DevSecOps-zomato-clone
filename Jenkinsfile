@@ -192,7 +192,7 @@ pipeline{
                     docker ps
 
                     echo "Checking Prometheus:"
-                    curl -f http://localhost:9091/-/healthy
+                    curl -f http://localhost:9090/-/healthy
 
                     echo "Checking Grafana:"
                     curl -f http://localhost:3000/api/health
