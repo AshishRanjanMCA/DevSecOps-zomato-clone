@@ -1,0 +1,3 @@
+DB_USERNAME = "admin"
+DB_PASSWORD = "Admin@123"
+API_KEY = "123456789abcdef"
